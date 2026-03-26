@@ -10,10 +10,10 @@ permissions:
   contents: read
 
 jobs:
-  # Upload the miden-client CLI as an artifact on the Github release.
+  # Upload the fabrizio CLI as an artifact on the Github release.
   # This is used by midenup to speed installs up.
   upload-artifacts:
-    name: upload pre-built miden-client executable artifacts
+    name: upload pre-built fabrizio executable artifacts
     permissions:
       contents: write
       id-token: write
@@ -41,20 +41,20 @@ jobs:
       - name: Add target
         run: |
           rustup target add ${{ matrix.target }}
-      - name: Build miden-client
+      - name: Build fabrizio
         run: |
           BUILD_TARGET=${{ matrix.target }} make build-cli 
       - name: Prepare artifact
         run: |
-          mv target/${{ matrix.target }}/release/miden-client miden-client-${{ matrix.target }}
-      - name: Attest miden-client
+          mv target/${{ matrix.target }}/release/fabrizio fabrizio-${{ matrix.target }}
+      - name: Attest fabrizio
         uses: actions/attest-build-provenance@v3
         with:
-          subject-path: miden-client-${{ matrix.target }}
+          subject-path: fabrizio-${{ matrix.target }}
       - name: Upload
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e
-          gh release upload ${RELEASE_TAG} miden-client-${{ matrix.target }}
+          gh release upload ${RELEASE_TAG} fabrizio-${{ matrix.target }}
